@@ -1,4 +1,5 @@
 package com.foodtraceqa.enums;
 
-public class Rol {
+public enum Rol {
+    SUPERVISOR, ADMIN;
 }

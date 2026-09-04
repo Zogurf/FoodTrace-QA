@@ -1,5 +1,5 @@
 package com.foodtraceqa.enums;
 
-public enum ROL {
-    CALIDAD;
+public enum Estado {
+    CUARENTENA, LIBERADO, RECHAZADO;
 }
