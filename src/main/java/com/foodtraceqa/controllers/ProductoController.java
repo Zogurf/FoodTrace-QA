@@ -14,9 +14,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductoController {
     private final ProductoService service;
-    @GetMapping public List<Producto> findAll() { return service.findAll(); }
-    @GetMapping("/{id}") public Producto findById(@PathVariable Long id) { return service.findById(id); }
-    @PostMapping @ResponseStatus(HttpStatus.CREATED) public Producto create(@Valid @RequestBody ProductoRequest r) { return service.create(r); }
-    @PutMapping("/{id}") public Producto update(@PathVariable Long id, @Valid @RequestBody ProductoRequest r) { return service.update(id, r); }
-    @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) public void delete(@PathVariable Long id) { service.delete(id); }
+
+    @GetMapping
+    public List<Producto> findAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Producto findById(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Producto create(@Valid @RequestBody ProductoRequest r) {
+        return service.create(r);
+    }
+
+    @PutMapping("/{id}")
+    public Producto update(@PathVariable Long id, @Valid @RequestBody ProductoRequest r) {
+        return service.update(id, r);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
 }

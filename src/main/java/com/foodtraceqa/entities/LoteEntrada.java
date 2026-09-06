@@ -13,10 +13,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "lotes_entrada", indexes = {
-        @Index(name = "idx_entrada_proveedor", columnList = "proveedor_id"),
-        @Index(name = "idx_entrada_materia", columnList = "materia_prima_id")
-})
+@Table(name = "lotes_entrada")
 public class LoteEntrada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

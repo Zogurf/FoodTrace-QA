@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "controles_calidad", indexes = @Index(name = "idx_calidad_lote", columnList = "lote_produccion_id"))
+@Table(name = "controles_calidad")
 public class ControlCalidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "proveedores", indexes = @Index(name = "idx_proveedor_ruc", columnList = "ruc", unique = true))
+@Table(name = "proveedores")
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

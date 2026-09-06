@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "lotes_consumo", indexes = {
-        @Index(name = "idx_consumo_produccion", columnList = "lote_producido_id"),
-        @Index(name = "idx_consumo_entrada", columnList = "lote_entrante_id")
-})
+@Table(name = "lotes_consumo")
 public class LoteConsumo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
