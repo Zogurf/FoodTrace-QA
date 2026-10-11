@@ -29,7 +29,8 @@ public class TrazabilidadService {
         Proveedor proveedor = proveedorRepository.findById(solicitud.proveedorId())
                 .filter(Proveedor::isActivo).orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado"));
         Materia materia = materiaRepository.findById(solicitud.materiaPrimaId())
-                .filter(Materia::isActivo).orElseThrow(() -> new IllegalArgumentException("Materia prima no encontrada"));
+                .filter(Materia::isActivo)
+                .orElseThrow(() -> new IllegalArgumentException("Materia prima no encontrada"));
         LoteEntrada lote = new LoteEntrada();
         lote.setEnviadoPor(proveedor);
         lote.setMateriaPrima(materia);
@@ -48,8 +49,8 @@ public class TrazabilidadService {
         if (solicitud.fechaProduccion().after(new Date())) {
             throw new IllegalArgumentException("La fecha de producción no puede ser futura");
         }
-        if (solicitud.consumos().stream().map(SolicitudConsumo::loteEntradaId).distinct().count()
-                != solicitud.consumos().size()) {
+        if (solicitud.consumos().stream().map(SolicitudConsumo::loteEntradaId).distinct().count() != solicitud
+                .consumos().size()) {
             throw new IllegalArgumentException("No se puede repetir un lote de entrada en los consumos");
         }
         Producto producto = productoRepository.findById(solicitud.productoId())
@@ -90,7 +91,8 @@ public class TrazabilidadService {
                         c.getLoteEntrante().getMateriaPrima().getNombre(),
                         c.getLoteEntrante().getEnviadoPor().getNombre(),
                         c.getLoteEntrante().getFechaRecepcion(), c.getLoteEntrante().getFechaVencimiento(),
-                        c.getCantidadConsumida())).toList();
+                        c.getCantidadConsumida()))
+                .toList();
         return new TrazabilidadHaciaAtras(produccion.getId(), produccion.getCodigo(),
                 produccion.getProducto().getNombre(), produccion.getEstado(), entradas);
     }
@@ -102,7 +104,8 @@ public class TrazabilidadService {
         List<TrazabilidadSalida> salidas = consumoRepository.findByLoteEntranteId(loteEntradaId).stream()
                 .map(c -> new TrazabilidadSalida(c.getLoteProducido().getId(), c.getLoteProducido().getCodigo(),
                         c.getLoteProducido().getProducto().getNombre(), c.getLoteProducido().getCantidad(),
-                        c.getLoteProducido().getEstado(), c.getCantidadConsumida())).toList();
+                        c.getLoteProducido().getEstado(), c.getCantidadConsumida()))
+                .toList();
         return new TrazabilidadHaciaAdelante(entrada.getId(), entrada.getMateriaPrima().getNombre(),
                 entrada.getEnviadoPor().getNombre(), salidas);
     }

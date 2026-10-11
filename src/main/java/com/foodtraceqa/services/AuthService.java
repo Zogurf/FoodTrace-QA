@@ -25,6 +25,7 @@ public class AuthService {
         if (usuarioRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("El username ya está registrado");
         }
+
         Usuario usuario = new Usuario();
         usuario.setNombres(request.nombres());
         usuario.setApellidos(request.apellidos());
@@ -41,6 +42,7 @@ public class AuthService {
         if (usuarioRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("El username ya está registrado");
         }
+        
         Usuario usuario = new Usuario();
         usuario.setNombres(request.nombres());
         usuario.setApellidos(request.apellidos());
@@ -55,8 +57,10 @@ public class AuthService {
     public AuthDTO.AuthResponse login(AuthDTO.LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+
         Usuario usuario = usuarioRepository.findByUsernameAndActivoTrue(request.username())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                
         return new AuthDTO.AuthResponse(jwtService.generateToken(usuario), usuario.getUsername(), usuario.getRol());
     }
 }
