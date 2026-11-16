@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS lotes_entrada (
     lote_entrada_id BIGINT NOT NULL AUTO_INCREMENT,
     proveedor_id BIGINT NOT NULL,
     materia_prima_id BIGINT NOT NULL,
+    liberado_por_id BIGINT,
+    fecha_liberacion DATETIME,
+    evidencia VARCHAR(255),
     fecha_recepcion DATETIME,
     fecha_vencimiento DATETIME,
     cantidad DOUBLE NOT NULL,
@@ -61,6 +64,7 @@ CREATE TABLE IF NOT EXISTS lotes_entrada (
     PRIMARY KEY (lote_entrada_id),
     KEY idx_entrada_proveedor (proveedor_id),
     KEY idx_entrada_materia (materia_prima_id),
+    CONSTRAINT fk_entrada_liberador FOREIGN KEY (liberado_por_id) REFERENCES usuarios (usuario_id),
     CONSTRAINT fk_entrada_proveedor FOREIGN KEY (proveedor_id) REFERENCES proveedores (proveedor_id),
     CONSTRAINT fk_entrada_materia FOREIGN KEY (materia_prima_id) REFERENCES materias_prima (materia_prima_id)
 ) ENGINE=InnoDB;
@@ -98,7 +102,8 @@ CREATE TABLE IF NOT EXISTS lotes_consumo (
 
 CREATE TABLE IF NOT EXISTS controles_calidad (
     control_calidad_id BIGINT NOT NULL AUTO_INCREMENT,
-    lote_produccion_id BIGINT NOT NULL,
+    lote_produccion_id BIGINT,
+    lote_entrada_id BIGINT,
     usuario_id BIGINT NOT NULL,
     evidencia VARCHAR(255),
     observacion VARCHAR(1000) NOT NULL,
@@ -106,6 +111,7 @@ CREATE TABLE IF NOT EXISTS controles_calidad (
     dictamen ENUM('APROBADO', 'RECHAZADO') NOT NULL,
     PRIMARY KEY (control_calidad_id),
     KEY idx_calidad_lote (lote_produccion_id),
+    CONSTRAINT fk_calidad_entrada FOREIGN KEY (lote_entrada_id) REFERENCES lotes_entrada (lote_entrada_id),
     CONSTRAINT fk_calidad_lote FOREIGN KEY (lote_produccion_id) REFERENCES lotes_produccion (lote_produccion_id),
     CONSTRAINT fk_calidad_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (usuario_id)
 ) ENGINE=InnoDB;

@@ -19,9 +19,13 @@ public class ControlCalidad {
     @Column(name = "control_calidad_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lote_produccion_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lote_produccion_id")
     private LoteProduccion loteProduccion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lote_entrada_id")
+    private LoteEntrada loteEntrada;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)

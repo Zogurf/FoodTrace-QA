@@ -81,6 +81,9 @@ class TrazabilidadIntegrationTests {
         LoteEntrada entrada = trazabilidadService.recibir(
                 new SolicitudRecepcion(proveedor.getId(), materia.getId(), vencimiento, 10));
 
+        entrada.setEstado(Estado.LIBERADO);
+        loteEntradaRepository.save(entrada);
+
         LoteProduccion produccion = trazabilidadService.producir(
                 new SolicitudProduccion(
                         producto.getId(),
@@ -102,6 +105,9 @@ class TrazabilidadIntegrationTests {
         LoteEntrada entrada = trazabilidadService.recibir(
                 new SolicitudRecepcion(proveedor.getId(), materia.getId(), vencimiento, 2));
 
+        entrada.setEstado(Estado.LIBERADO);
+        loteEntradaRepository.save(entrada);
+
         assertThatThrownBy(() -> trazabilidadService.producir(
                 new SolicitudProduccion(
                         producto.getId(),
@@ -112,4 +118,21 @@ class TrazabilidadIntegrationTests {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Cantidad disponible insuficiente");
     }
+    @Test
+    void deberiaRechazarInsumosEnCuarentenaRechazadosOVencidos() {
+        LoteEntrada entrada = trazabilidadService.recibir(new SolicitudRecepcion(
+                proveedor.getId(), materia.getId(), new Date(System.currentTimeMillis() + 86_400_000L), 10));
+        for (Estado estado : List.of(Estado.CUARENTENA, Estado.RECHAZADO, Estado.LIBERADO)) {
+            entrada.setEstado(estado);
+            if (estado == Estado.LIBERADO) entrada.setFechaVencimiento(new Date(0));
+            loteEntradaRepository.save(entrada);
+            assertThatThrownBy(() -> trazabilidadService.producir(new SolicitudProduccion(
+                    producto.getId(), "INVALIDO-" + estado, 1, new Date(),
+                    List.of(new SolicitudConsumo(entrada.getId(), 1)))))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining(estado == Estado.LIBERADO ? "vencido" : "LIBERADOS");
+            assertThat(entrada.getCantidadDisponible()).isEqualTo(10);
+        }
+    }
+
 }

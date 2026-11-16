@@ -28,6 +28,12 @@ public class LoteEntrada {
     @JoinColumn(name = "materia_prima_id", nullable = false)
     private Materia materiaPrima;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "liberado_por_id")
+    private Usuario liberadoPor;
+    private Date fechaLiberacion;
+    private String evidencia;
+
     private Date fechaRecepcion;
     private Date fechaVencimiento;
     @PositiveOrZero

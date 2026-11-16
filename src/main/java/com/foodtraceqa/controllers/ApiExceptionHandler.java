@@ -25,6 +25,13 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(Map.of("error", exception.getMessage()));
     }
 
+    @ExceptionHandler({org.springframework.dao.PessimisticLockingFailureException.class,
+            org.springframework.dao.DataIntegrityViolationException.class})
+    ResponseEntity<Map<String, String>> handleConflict(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error",
+                "La operación entró en conflicto con otro cambio. Revisa los datos y vuelve a intentarlo."));
+    }
+
     @ExceptionHandler(UnsupportedOperationException.class)
     ResponseEntity<Map<String, String>> handleForbiddenOperation(UnsupportedOperationException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", exception.getMessage()));

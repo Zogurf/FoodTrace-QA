@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ControlCalidadRepository extends JpaRepository<ControlCalidad, Long> {
     List<ControlCalidad> findByLoteProduccionIdOrderByFechaDesc(Long loteProduccionId);
+    List<ControlCalidad> findByLoteEntradaIdOrderByFechaDesc(Long loteEntradaId);
 }

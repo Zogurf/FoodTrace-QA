@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -65,10 +66,18 @@ public class TrazabilidadService {
         lote.setEstado(Estado.CUARENTENA);
         lote.setActivo(true);
         LoteProduccion guardado = produccionRepository.save(lote);
-        for (SolicitudConsumo consumo : solicitud.consumos()) {
-            LoteEntrada entrada = entradaRepository.findById(consumo.loteEntradaId())
+        // Lock shared inputs in a consistent order to avoid crossed-lock deadlocks.
+        for (SolicitudConsumo consumo : solicitud.consumos().stream()
+                .sorted(Comparator.comparing(SolicitudConsumo::loteEntradaId)).toList()) {
+            LoteEntrada entrada = entradaRepository.findByIdForUpdate(consumo.loteEntradaId())
                     .filter(LoteEntrada::isActivo)
                     .orElseThrow(() -> new IllegalArgumentException("Lote de entrada no encontrado"));
+            if (entrada.getEstado() != Estado.LIBERADO)
+                throw new IllegalArgumentException("Solo se pueden consumir lotes de entrada LIBERADOS");
+            if (entrada.getFechaVencimiento() == null || !entrada.getFechaVencimiento().after(new Date()))
+                throw new IllegalArgumentException("No se puede consumir un lote vencido");
+            if (!Double.isFinite(consumo.cantidadConsumida()) || consumo.cantidadConsumida() <= 0)
+                throw new IllegalArgumentException("La cantidad consumida debe ser positiva");
             if (entrada.getCantidadDisponible() < consumo.cantidadConsumida())
                 throw new IllegalArgumentException("Cantidad disponible insuficiente en lote " + entrada.getId());
             entrada.setCantidadDisponible(entrada.getCantidadDisponible() - consumo.cantidadConsumida());

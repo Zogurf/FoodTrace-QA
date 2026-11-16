@@ -17,14 +17,16 @@ public class TrazabilidadController {
 
     @PostMapping("/recepciones")
     @ResponseStatus(HttpStatus.CREATED)
-    public LoteEntrada recibir(@Valid @RequestBody SolicitudRecepcion solicitud) {
-        return service.recibir(solicitud);
+    public OperacionRespuesta recibir(@Valid @RequestBody SolicitudRecepcion solicitud) {
+        LoteEntrada lote = service.recibir(solicitud);
+        return new OperacionRespuesta(lote.getId(), null, lote.getEstado(), lote.getCantidad(), lote.getCantidadDisponible());
     }
 
     @PostMapping("/producciones")
     @ResponseStatus(HttpStatus.CREATED)
-    public LoteProduccion producir(@Valid @RequestBody SolicitudProduccion solicitud) {
-        return service.producir(solicitud);
+    public OperacionRespuesta producir(@Valid @RequestBody SolicitudProduccion solicitud) {
+        LoteProduccion lote = service.producir(solicitud);
+        return new OperacionRespuesta(lote.getId(), lote.getCodigo(), lote.getEstado(), lote.getCantidad(), null);
     }
 
     @GetMapping("/hacia-atras/{loteProduccionId}")
